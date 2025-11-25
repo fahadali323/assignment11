@@ -1,264 +1,146 @@
 # 📦 Project Setup
 
 ---
+## Screenshots
+1. GitHub Actions Workflow:Screenshot showing a successful run of the GitHub Actions workflow.
+![alt text](image.png)
+2. Docker Hub Deployment: Screenshot demonstrating the Docker image has been successfully pushed to Docker Hub.
+![alt text](image-1.png)
+# Project Setup Guide
 
-# 🧩 1. Install Homebrew (Mac Only)
+This guide explains how to fully set up the repository on a new machine
+and start the Docker containers.
 
-> Skip this step if you're on Windows.
+------------------------------------------------------------------------
 
-Homebrew is a package manager for macOS.  
-You’ll use it to easily install Git, Python, Docker, etc.
+## 📦 Prerequisites
 
-**Install Homebrew:**
+Ensure the following are installed:
 
-```bash
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+-   **Git**
+-   **Docker** & **Docker Compose**
+-   **Python 3.10+** (if running scripts locally)
+-   **pip** (Python package manager)
+
+------------------------------------------------------------------------
+
+## 🚀 1. Clone the Repository
+
+``` bash
+git clone <your-repo-url>.git
+cd <your-repo-folder>
 ```
 
-**Verify Homebrew:**
+------------------------------------------------------------------------
 
-```bash
-brew --version
+## 🛠 2. Create a `.env` File
+
+Copy the example environment file:
+
+``` bash
+cp .env.example .env
 ```
 
-If you see a version number, you're good to go.
+Then edit `.env` and add your secrets:
 
----
-
-# 🧩 2. Install and Configure Git
-
-## Install Git
-
-- **MacOS (using Homebrew)**
-
-```bash
-brew install git
+``` bash
+nano .env
 ```
 
-- **Windows**
+------------------------------------------------------------------------
 
-Download and install [Git for Windows](https://git-scm.com/download/win).  
-Accept the default options during installation.
+## 🛠 3. Python Dependencies
 
-**Verify Git:**
+Copy the example environment file:
 
-```bash
-git --version
+``` bash
+python -m venv venv
 ```
-
----
-
-## Configure Git Globals
-
-Set your name and email so Git tracks your commits properly:
-
-```bash
-git config --global user.name "Your Name"
-git config --global user.email "your_email@example.com"
+Activate it:
+``` bash
+source venv/Scripts/activate
 ```
+Install requirements:
 
-Confirm the settings:
-
-```bash
-git config --list
-```
-
----
-
-## Generate SSH Keys and Connect to GitHub
-
-> Only do this once per machine.
-
-1. Generate a new SSH key:
-
-```bash
-ssh-keygen -t ed25519 -C "your_email@example.com"
-```
-
-(Press Enter at all prompts.)
-
-2. Start the SSH agent:
-
-```bash
-eval "$(ssh-agent -s)"
-```
-
-3. Add the SSH private key to the agent:
-
-```bash
-ssh-add ~/.ssh/id_ed25519
-```
-
-4. Copy your SSH public key:
-
-- **Mac/Linux:**
-
-```bash
-cat ~/.ssh/id_ed25519.pub | pbcopy
-```
-
-- **Windows (Git Bash):**
-
-```bash
-cat ~/.ssh/id_ed25519.pub | clip
-```
-
-5. Add the key to your GitHub account:
-   - Go to [GitHub SSH Settings](https://github.com/settings/keys)
-   - Click **New SSH Key**, paste the key, save.
-
-6. Test the connection:
-
-```bash
-ssh -T git@github.com
-```
-
-You should see a success message.
-
----
-
-# 🧩 3. Clone the Repository
-
-Now you can safely clone the course project:
-
-```bash
-git clone <repository-url>
-cd <repository-directory>
-```
-
----
-
-# 🛠️ 4. Install Python 3.10+
-
-## Install Python
-
-- **MacOS (Homebrew)**
-
-```bash
-brew install python
-```
-
-- **Windows**
-
-Download and install [Python for Windows](https://www.python.org/downloads/).  
-✅ Make sure you **check the box** `Add Python to PATH` during setup.
-
-**Verify Python:**
-
-```bash
-python3 --version
-```
-or
-```bash
-python --version
-```
-
----
-
-## Create and Activate a Virtual Environment
-
-(Optional but recommended)
-
-```bash
-python3 -m venv venv
-source venv/bin/activate   # Mac/Linux
-venv\Scripts\activate.bat  # Windows
-```
-
-### Install Required Packages
-
-```bash
+``` bash
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
+------------------------------------------------------------------------
 
----
+## 📁 4. Build and Start Containers
 
-# 🐳 5. (Optional) Docker Setup
+To build and run everything:
 
-> Skip if Docker isn't used in this module.
-
-## Install Docker
-
-- [Install Docker Desktop for Mac](https://www.docker.com/products/docker-desktop/)
-- [Install Docker Desktop for Windows](https://www.docker.com/products/docker-desktop/)
-
-## Build Docker Image
-
-```bash
-docker build -t <image-name> .
+``` bash
+docker compose up -d --build
 ```
 
-## Run Docker Container
+To check running containers:
 
-```bash
-docker run -it --rm <image-name>
+``` bash
+docker ps
 ```
 
----
+------------------------------------------------------------------------
 
-# 🚀 6. Running the Project
+## 🔄 5. Apply Database Migrations (if using Alembic/FastAPI)
 
-- **Without Docker**:
-
-```bash
-python main.py
+``` bash
+docker compose exec backend alembic upgrade head
 ```
 
-(or update this if the main script is different.)
+------------------------------------------------------------------------
 
-- **With Docker**:
+## 🧪 6. Run Tests
 
-```bash
-docker run -it --rm <image-name>
+``` bash
+docker compose exec backend pytest
 ```
 
----
+------------------------------------------------------------------------
 
-# 📝 7. Submission Instructions
+## 🛑 7. Stopping Services
 
-After finishing your work:
-
-```bash
-git add .
-git commit -m "Complete Module X"
-git push origin main
+``` bash
+docker compose down
 ```
 
-Then submit the GitHub repository link as instructed.
+To also remove volumes:
 
----
+``` bash
+docker compose down -v
+```
 
-# 🔥 Useful Commands Cheat Sheet
+------------------------------------------------------------------------
 
-| Action                         | Command                                          |
-| ------------------------------- | ------------------------------------------------ |
-| Install Homebrew (Mac)          | `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"` |
-| Install Git                     | `brew install git` or Git for Windows installer |
-| Configure Git Global Username  | `git config --global user.name "Your Name"`      |
-| Configure Git Global Email     | `git config --global user.email "you@example.com"` |
-| Clone Repository                | `git clone <repo-url>`                          |
-| Create Virtual Environment     | `python3 -m venv venv`                           |
-| Activate Virtual Environment   | `source venv/bin/activate` / `venv\Scripts\activate.bat` |
-| Install Python Packages        | `pip install -r requirements.txt`               |
-| Build Docker Image              | `docker build -t <image-name> .`                |
-| Run Docker Container            | `docker run -it --rm <image-name>`               |
-| Push Code to GitHub             | `git add . && git commit -m "message" && git push` |
+## 🧼 8. Rebuilding from Scratch
 
----
+``` bash
+docker compose down -v
+docker compose build --no-cache
+docker compose up -d
+```
 
-# 📋 Notes
+------------------------------------------------------------------------
 
-- Install **Homebrew** first on Mac.
-- Install and configure **Git** and **SSH** before cloning.
-- Use **Python 3.10+** and **virtual environments** for Python projects.
-- **Docker** is optional depending on the project.
+## 📝 Notes
 
----
+-   If you change dependencies, rebuild:
 
-# 📎 Quick Links
+``` bash
+docker compose build backend
+```
 
-- [Homebrew](https://brew.sh/)
-- [Git Downloads](https://git-scm.com/downloads)
-- [Python Downloads](https://www.python.org/downloads/)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
-- [GitHub SSH Setup Guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
+-   If using Trivy, run scans:
+
+``` bash
+trivy fs .
+trivy image yourimagename
+```
+
+------------------------------------------------------------------------
+
+## 🎉 Done!
+
+Your environment is fully set up.
